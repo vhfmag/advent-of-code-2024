@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 type Output = isize;
 
-fn parse_day_1(input: Option<&str>) -> (Vec<Output>, Vec<Output>) {
+fn parse_input(input: Option<&str>) -> (Vec<Output>, Vec<Output>) {
     let input = if let Some(input) = input {
         input
     } else {
@@ -26,8 +26,8 @@ fn parse_day_1(input: Option<&str>) -> (Vec<Output>, Vec<Output>) {
         .collect()
 }
 
-pub fn day_1_part_1(input: Option<&str>) -> Output {
-    let (mut list1, mut list2): (Vec<_>, Vec<_>) = parse_day_1(input);
+pub fn part_1(input: Option<&str>) -> Output {
+    let (mut list1, mut list2): (Vec<_>, Vec<_>) = parse_input(input);
 
     list1.sort();
     list2.sort();
@@ -37,8 +37,8 @@ pub fn day_1_part_1(input: Option<&str>) -> Output {
         .sum()
 }
 
-pub fn day_1_part_2(input: Option<&str>) -> Output {
-    let (list1, list2): (Vec<_>, Vec<_>) = parse_day_1(input);
+pub fn part_2(input: Option<&str>) -> Output {
+    let (list1, list2): (Vec<_>, Vec<_>) = parse_input(input);
 
     let count_map = list2.into_iter().fold(HashMap::new(), |mut map, x| {
         *map.entry(x).or_insert(0) += 1;
@@ -66,14 +66,14 @@ mod test {
 
     #[test]
     fn test_day_1_part_1() {
-        let result = day_1_part_1(Some(EXAMPLE));
+        let result = part_1(Some(EXAMPLE));
 
         assert_eq!(result, 11);
     }
 
     #[test]
     fn test_day_1_part_2() {
-        let result = day_1_part_2(Some(EXAMPLE));
+        let result = part_2(Some(EXAMPLE));
 
         assert_eq!(result, 31);
     }
