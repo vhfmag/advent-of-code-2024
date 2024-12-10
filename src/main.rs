@@ -44,6 +44,8 @@ pub fn main() {
         (8, 2) => println!("day 8, part 2: {}", day8::part_2(None)),
         (9, 1) => println!("day 9, part 1: {}", day9::part_1(None)),
         (9, 2) => println!("day 9, part 2: {}", day9::part_2(None)),
+        (10, 1) => println!("day 10, part 1: {}", day10::part_1(None)),
+        (10, 2) => println!("day 10, part 2: {}", day10::part_2(None)),
         _ => panic!("Invalid day or part"),
     }
 }
