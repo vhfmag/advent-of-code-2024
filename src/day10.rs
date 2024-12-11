@@ -23,30 +23,28 @@ fn parse_input(input: Option<&str>) -> Map {
 
 const DIRECTIONS: [(isize, isize); 4] = [(0, 1), (0, -1), (1, 0), (-1, 0)];
 
-fn find_trail(map: &Map, x: usize, y: usize) -> Vec<(usize, usize)> {
+fn find_trail(map: &Map, x: usize, y: usize) -> Box<dyn Iterator<Item = (usize, usize)> + '_> {
     let current_value = map[x][y];
 
     if current_value == 9 {
-        return vec![(x, y)];
+        return Box::new(std::iter::once((x, y)));
     }
 
-    DIRECTIONS
-        .iter()
-        .filter_map(|(dx, dy)| {
-            let new_x: usize = (x as isize + dx).try_into().ok()?;
-            let new_y: usize = (y as isize + dy).try_into().ok()?;
+    Box::new(
+        DIRECTIONS
+            .iter()
+            .filter_map(move |(dx, dy)| {
+                let x: usize = (x as isize + dx).try_into().ok()?;
+                let y: usize = (y as isize + dy).try_into().ok()?;
 
-            if new_x >= map.len()
-                || new_y >= map[new_x].len()
-                || map[new_x][new_y] != current_value + 1
-            {
-                None
-            } else {
-                Some(find_trail(map, new_x, new_y))
-            }
-        })
-        .flatten()
-        .collect()
+                if x >= map.len() || y >= map[x].len() || map[x][y] != current_value + 1 {
+                    None
+                } else {
+                    Some(find_trail(map, x, y))
+                }
+            })
+            .flatten(),
+    )
 }
 
 pub fn part_1(input: Option<&str>) -> usize {
@@ -60,11 +58,7 @@ pub fn part_1(input: Option<&str>) -> usize {
     });
 
     zeroes
-        .flat_map(|(x, y)| {
-            find_trail(&map, x, y)
-                .into_iter()
-                .map(move |end| ((x, y), end))
-        })
+        .flat_map(|(x, y)| find_trail(&map, x, y).map(move |end| ((x, y), end)))
         .collect::<HashSet<_>>()
         .len()
 }
@@ -79,9 +73,7 @@ pub fn part_2(input: Option<&str>) -> usize {
             .map(move |(j, _)| (i, j))
     });
 
-    zeroes
-        .map(|(x, y)| find_trail(&map, x, y).into_iter().count())
-        .sum()
+    zeroes.map(|(x, y)| find_trail(&map, x, y).count()).sum()
 }
 
 #[cfg(test)]
