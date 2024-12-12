@@ -168,7 +168,7 @@ fn get_region_sides(region: &HashSet<Pos>, width: usize, height: usize) -> usize
                 Direction::Right => y,
             });
 
-            1 + boundaries
+            let discontinuities = boundaries
                 .windows(2)
                 .filter(|window| {
                     let ((x1, y1), _) = window[0];
@@ -187,7 +187,10 @@ fn get_region_sides(region: &HashSet<Pos>, width: usize, height: usize) -> usize
                         false
                     }
                 })
-                .count()
+                .count();
+
+            // there's always at least one side (if it's a single continuous line) + 1 new side per discontinuity
+            1 + discontinuities
         })
         .sum()
 }
