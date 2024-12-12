@@ -133,7 +133,7 @@ fn get_region_boundaries(
                     }
                 }
             })
-            .map(move |&delta| ((x, y), delta))
+            .map(move |&dir| ((x, y), dir))
     })
 }
 
@@ -142,26 +142,28 @@ pub fn get_region_perimeter(region: &HashSet<Pos>, width: usize, height: usize) 
 }
 
 fn get_region_sides(region: &HashSet<Pos>, width: usize, height: usize) -> usize {
-    let sides_map: HashMap<_, _> = get_region_boundaries(region, width, height)
-        .map(|((x, y), delta)| {
-            let key = match delta {
-                Direction::Up => (y, delta),
-                Direction::Down => (y, delta),
-                Direction::Left => (x, delta),
-                Direction::Right => (x, delta),
+    let boundaries_per_alignment: HashMap<_, _> = get_region_boundaries(region, width, height)
+        .map(|((x, y), dir)| {
+            // for boundaries to be aligned, they need have the same direction and the same x (for
+            // left and right boundaries) or y (for up and down boundaries)
+            let key = match dir {
+                Direction::Up => (y, dir),
+                Direction::Down => (y, dir),
+                Direction::Left => (x, dir),
+                Direction::Right => (x, dir),
             };
 
-            (key, ((x, y), delta))
+            (key, (x, y))
         })
         .fold(HashMap::new(), |mut acc, (key, value)| {
             acc.entry(key).or_insert_with(Vec::new).push(value);
             acc
         });
 
-    sides_map
+    boundaries_per_alignment
         .into_iter()
-        .map(|((_, delta), mut boundaries)| -> usize {
-            boundaries.sort_by_key(|&((x, y), _)| match delta {
+        .map(|((_, dir), mut boundaries)| -> usize {
+            boundaries.sort_by_key(|&(x, y)| match dir {
                 Direction::Up => x,
                 Direction::Down => x,
                 Direction::Left => y,
@@ -171,10 +173,10 @@ fn get_region_sides(region: &HashSet<Pos>, width: usize, height: usize) -> usize
             let discontinuities = boundaries
                 .windows(2)
                 .filter(|window| {
-                    let ((x1, y1), _) = window[0];
-                    let ((x2, y2), _) = window[1];
+                    let (x1, y1) = window[0];
+                    let (x2, y2) = window[1];
 
-                    let diff = match delta {
+                    let diff = match dir {
                         Direction::Up => x2 - x1,
                         Direction::Down => x2 - x1,
                         Direction::Left => y2 - y1,
