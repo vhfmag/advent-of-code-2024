@@ -3,6 +3,7 @@ mod day10;
 mod day11;
 mod day12;
 mod day13;
+mod day14;
 mod day2;
 mod day3;
 mod day4;
@@ -55,6 +56,8 @@ pub fn main() {
         (12, 2) => println!("day 12, part 2: {}", day12::part_2(None)),
         (13, 1) => println!("day 13, part 1: {}", day13::part_1(None)),
         (13, 2) => println!("day 13, part 2: {}", day13::part_2(None)),
+        (14, 1) => println!("day 14, part 1: {}", day14::part_1(None, (101, 103))),
+        (14, 2) => println!("day 14, part 2: {:?}", day14::part_2(None, (101, 103))),
         _ => panic!("Invalid day or part"),
     }
 }
