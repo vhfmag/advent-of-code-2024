@@ -1,6 +1,5 @@
 use std::{
     collections::HashMap,
-    io::{stdin, Read},
     num::ParseIntError,
     ops::{Add, Mul},
     str::FromStr,
